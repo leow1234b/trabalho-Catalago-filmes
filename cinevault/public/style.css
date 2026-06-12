@@ -36,4 +36,9 @@ button{
     background: crimson;
     color: white;
     border: none;
+    cursor: pointer;
+}
+
+button:hover{
+    background: darkred;
 }

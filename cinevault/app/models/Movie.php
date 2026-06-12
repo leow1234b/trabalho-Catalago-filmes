@@ -1,9 +1,7 @@
 <?php
-
 require_once __DIR__ . '/../../config/database.php';
 
-class User{
-
+class Movie{
     private $conn;
 
     public function __construct(){
@@ -11,117 +9,30 @@ class User{
         $this->conn = $database->connect();
     }
 
-    public function register($nome, $email, $senha){
-
-        $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
-
-        $sql = "INSERT INTO usuarios(nome,email,senha)
-                VALUES(:nome,:email,:senha)";
-
+    public function getAll(){
+        $sql = "SELECT * FROM filmes ORDER BY id DESC";
         $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
+    public function create($titulo, $descricao, $ano, $genero, $capa){
+        $sql = "INSERT INTO filmes(titulo, descricao, ano, genero, capa) VALUES(:titulo, :descricao, :ano, :genero, :capa)";
+        $stmt = $this->conn->prepare($sql);
         return $stmt->execute([
-            ':nome' => $nome,
-            ':email' => $email,
-            ':senha' => $senhaHash
+            ':titulo' => $titulo,
+            ':descricao' => $descricao,
+            ':ano' => $ano,
+            ':genero' => $genero,
+            ':capa' => $capa
         ]);
     }
 
-    public function login($email, $senha){
-
-        $sql = "SELECT * FROM usuarios WHERE email = :email";
-
+    public function getById($id){
+        $sql = "SELECT * FROM filmes WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
-
-        $stmt->execute([':email' => $email]);
-
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if($user && password_verify($senha, $user['senha'])){
-            return $user;
-        }
-
-        return false;
-    }
-}<?php
-
-require_once __DIR__ . '/../../config/database.php';
-
-class User{
-
-    private $conn;
-
-    public function __construct(){
-        $database = new Database();
-        $this->conn = $database->connect();
-    }
-
-    public function register($nome, $email, $senha){
-
-        $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
-
-        $sql = "INSERT INTO usuarios(nome,email,senha)
-                VALUES(:nome,:email,:senha)";
-
-        $stmt = $this->conn->prepare($sql);
-
-        return $stmt->execute([
-            ':nome' => $nome,
-            ':email' => $email,
-            ':senha' => $senhaHash
-        ]);
-    }
-
-    public function login($email, $senha){
-        if($user && password_verify($senha, $user['senha'])){
-            return $user;
-        }
-
-        return false;
-    }
-}<?php
-
-require_once __DIR__ . '/../../config/database.php';
-
-class User{
-
-    private $conn;
-
-    public function __construct(){
-        $database = new Database();
-        $this->conn = $database->connect();
-    }
-
-    public function register($nome, $email, $senha){
-
-        $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
-
-        $sql = "INSERT INTO usuarios(nome,email,senha)
-                VALUES(:nome,:email,:senha)";
-
-        $stmt = $this->conn->prepare($sql);
-
-        return $stmt->execute([
-            ':nome' => $nome,
-            ':email' => $email,
-            ':senha' => $senhaHash
-        ]);
-    }
-
-    public function login($email, $senha){
-
-        $sql = "SELECT * FROM usuarios WHERE email = :email";
-
-        $stmt = $this->conn->prepare($sql);
-
-        $stmt->execute([':email' => $email]);
-
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if($user && password_verify($senha, $user['senha'])){
-            return $user;
-        }
-
-        return false;
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
+?>

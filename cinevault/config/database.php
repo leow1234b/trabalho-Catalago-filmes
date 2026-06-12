@@ -1,15 +1,20 @@
 <?php
 
-class Database{
+class Database {
+
     private $host = "localhost";
-    private $dbname = "cinevault";
+    private $port = "3307";
+    private $db = "cinevault";
     private $user = "root";
     private $pass = "";
 
+
     public function connect(){
-        try{
+
+        try {
+
             $conn = new PDO(
-                "mysql:host={$this->host};dbname={$this->dbname}",
+                "mysql:host=".$this->host.";port=".$this->port.";dbname=".$this->db,
                 $this->user,
                 $this->pass
             );
@@ -18,9 +23,14 @@ class Database{
 
             return $conn;
 
-        } catch(PDOException $e) {
-            die("Erro: " . $e->getMessage());
+        } catch(PDOException $e){
+
+            die("Erro de conexão: ".$e->getMessage());
+
         }
+
     }
+
 }
+
 ?>
