@@ -1,39 +1,47 @@
 <?php
+define('APP_STARTED', true);
+
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
 
 session_start();
 
-require_once __DIR__ . "/app/controllers/AuthController.php";
-require_once __DIR__ . "/app/controllers/MovieController.php";
-
-
-$auth = new AuthController();
-$movie = new MovieController();
-
-
-$acao = $_GET['acao'] ?? 'filmes';
-
-
-switch ($acao) {
-
-    case "login":
-        $auth->login();
-        break;
-
-    case "register":
-        $auth->register();
-        break;
-
-    case "logout":
-        $auth->logout();
-        break;
-
-    case "filmes":
-        $movie->index();
-        break;
-
-    default:
-        $movie->index();
-        break;
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-?>
+require_once __DIR__ . '/app/controllers/Authcontroller.php';
+require_once __DIR__ . '/app/controllers/Moviecontroller.php';
+
+$page = $_GET['page'] ?? 'home';
+
+switch ($page) {
+    case 'login':
+        (new AuthController())->login();
+        break;
+    case 'register':
+        (new AuthController())->register();
+        break;
+    case 'logout':
+        (new AuthController())->logout();
+        break;
+    case 'movies':
+        (new MovieController())->index();
+        break;
+    case 'create_movie':
+        (new MovieController())->create();
+        break;
+    case 'edit_movie':
+        (new MovieController())->edit();
+        break;
+    case 'delete_movie':
+        (new MovieController())->delete();
+        break;
+    default:
+        require_once __DIR__ . '/app/views/Home.php';
+        break;
+}
